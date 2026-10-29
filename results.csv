@@ -1,0 +1,1 @@
+run_id,date,commit,pruning,quant,seed,accuracy,params,macs,latency_ms,flash_kb,ram_kb,energy_mj,notes
