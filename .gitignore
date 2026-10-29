@@ -5,3 +5,5 @@ __pycache__/
 *.onnx
 data/
 wandb/
+smoke_out/
+out/

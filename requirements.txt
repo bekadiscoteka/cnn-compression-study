@@ -1,0 +1,8 @@
+# torch and torchvision are preinstalled in Colab
+torch
+torchvision
+torch-pruning==1.6.0
+onnx==1.23.2
+onnxruntime==1.29.0
+onnxscript
+pyyaml

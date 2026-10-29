@@ -12,6 +12,14 @@ The plan is fixed in `methodology.docx` (committed before any experiments).
 | `config.yaml` | All experiment settings |
 | `results.csv` | One row per run; the only source of numbers for the thesis |
 | `notes.md` | Problems, deviations from the plan, decisions |
+| `train.py` | One run: baseline, pruning, ONNX export, int8 PTQ, accuracy, row in `results.csv` |
+| `colab.ipynb` | Runs `train.py` on a Colab GPU |
+
+## Running
+
+Open `colab.ipynb` in Google Colab (File → Open notebook → GitHub), set `PRUNING` and `SEED`, run all cells. Models and `results.csv` are saved to Google Drive in `cnn-study/`.
+
+Local pipeline check without a GPU: `python train.py --smoke`.
 
 ## Rules
 
