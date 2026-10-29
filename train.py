@@ -16,6 +16,7 @@ import copy
 import csv
 import datetime
 import random
+import shutil
 import subprocess
 import time
 import warnings
@@ -37,6 +38,7 @@ from torchvision.models.mobilenetv2 import InvertedResidual
 
 HERE = Path(__file__).resolve().parent
 warnings.filterwarnings("ignore", category=DeprecationWarning)  # legacy ONNX exporter notice
+warnings.filterwarnings("ignore", message="Detected call of `lr_scheduler.step()`")  # harmless with AMP
 MEAN, STD = (0.4914, 0.4822, 0.4465), (0.2470, 0.2435, 0.2616)
 FIELDS = ["run_id", "date", "commit", "pruning", "quant", "seed", "accuracy", "params", "macs",
           "latency_ms", "flash_kb", "ram_kb", "energy_mj", "notes"]
@@ -95,15 +97,22 @@ def build_model(width):
     return model
 
 
-def get_data(smoke, root):
+def get_data(smoke, root, cache_dir):
     train_tf = T.Compose([T.RandomCrop(32, padding=4), T.RandomHorizontalFlip(), T.ToTensor(), T.Normalize(MEAN, STD)])
     test_tf = T.Compose([T.ToTensor(), T.Normalize(MEAN, STD)])
     if smoke:
         fake = lambda n, tf, off: torchvision.datasets.FakeData(n, (3, 32, 32), 10, tf, random_offset=off)
         return fake(256, train_tf, 0), fake(256, test_tf, 0), fake(64, test_tf, 10_000)
+    # The download is slow in Colab, so the archive is kept on Drive and copied back in later sessions.
+    archive, cached = root / "cifar-10-python.tar.gz", cache_dir / "cifar-10-python.tar.gz"
+    root.mkdir(parents=True, exist_ok=True)
+    if cached.exists() and not archive.exists():
+        shutil.copy(cached, archive)
     train = torchvision.datasets.CIFAR10(root, train=True, transform=train_tf, download=True)
     calib = torchvision.datasets.CIFAR10(root, train=True, transform=test_tf)  # no augmentation
     test = torchvision.datasets.CIFAR10(root, train=False, transform=test_tf, download=True)
+    if archive.exists() and not cached.exists():
+        shutil.copy(archive, cached)
     return train, calib, test
 
 
@@ -333,7 +342,7 @@ def main():
     (out / "models").mkdir(parents=True, exist_ok=True)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Device {device}, commit {git_commit()}, {len(seeds)} seed(s) x {len(ratios)} pruning ratio(s)")
-    data = get_data(args.smoke, HERE / "data")  # local disk: much faster than Drive
+    data = get_data(args.smoke, HERE / "data", out)  # data on local disk: much faster than Drive
 
     for seed in seeds:  # one seed at a time: a full picture appears after the first seed
         for p in ratios:
