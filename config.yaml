@@ -13,6 +13,8 @@ train:
 
 finetune_epochs: 15        # same budget for every configuration
 finetune_lr: 0.01
+qat_epochs: 5              # quantization-aware fine-tuning, same for every ratio
+qat_lr: 0.001
 calibration_images: 500    # PTQ calibration set size
 
 pruning_ratios: [0.0, 0.25, 0.50, 0.75]
