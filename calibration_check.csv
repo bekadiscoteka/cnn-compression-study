@@ -1,0 +1,49 @@
+model,pruning,seed,calibration,fp32_val_acc,int8_val_acc,drop_pp
+mbv2_p00_fp32_s1,0.0,1,minmax,98.90,96.16,2.74
+mbv2_p00_fp32_s1,0.0,1,percentile 99.999,98.90,96.30,2.60
+mbv2_p00_fp32_s1,0.0,1,percentile 99.99,98.90,96.42,2.48
+mbv2_p00_fp32_s1,0.0,1,percentile 99.9,98.90,95.12,3.78
+mbv2_p25_fp32_s1,0.25,1,minmax,94.26,91.14,3.12
+mbv2_p25_fp32_s1,0.25,1,percentile 99.999,94.26,91.72,2.54
+mbv2_p25_fp32_s1,0.25,1,percentile 99.99,94.26,90.72,3.54
+mbv2_p25_fp32_s1,0.25,1,percentile 99.9,94.26,89.36,4.90
+mbv2_p50_fp32_s1,0.5,1,minmax,84.14,72.44,11.70
+mbv2_p50_fp32_s1,0.5,1,percentile 99.999,84.14,76.62,7.52
+mbv2_p50_fp32_s1,0.5,1,percentile 99.99,84.14,80.18,3.96
+mbv2_p50_fp32_s1,0.5,1,percentile 99.9,84.14,80.02,4.12
+mbv2_p75_fp32_s1,0.75,1,minmax,65.68,31.56,34.12
+mbv2_p75_fp32_s1,0.75,1,percentile 99.999,65.68,32.60,33.08
+mbv2_p75_fp32_s1,0.75,1,percentile 99.99,65.68,32.30,33.38
+mbv2_p75_fp32_s1,0.75,1,percentile 99.9,65.68,40.02,25.66
+mbv2_p00_fp32_s2,0.0,2,minmax,99.04,97.84,1.20
+mbv2_p00_fp32_s2,0.0,2,percentile 99.999,99.04,97.66,1.38
+mbv2_p00_fp32_s2,0.0,2,percentile 99.99,99.04,97.58,1.46
+mbv2_p00_fp32_s2,0.0,2,percentile 99.9,99.04,97.36,1.68
+mbv2_p25_fp32_s2,0.25,2,minmax,94.30,92.70,1.60
+mbv2_p25_fp32_s2,0.25,2,percentile 99.999,94.30,92.96,1.34
+mbv2_p25_fp32_s2,0.25,2,percentile 99.99,94.30,92.42,1.88
+mbv2_p25_fp32_s2,0.25,2,percentile 99.9,94.30,91.70,2.60
+mbv2_p50_fp32_s2,0.5,2,minmax,84.34,64.26,20.08
+mbv2_p50_fp32_s2,0.5,2,percentile 99.999,84.34,62.40,21.94
+mbv2_p50_fp32_s2,0.5,2,percentile 99.99,84.34,70.04,14.30
+mbv2_p50_fp32_s2,0.5,2,percentile 99.9,84.34,71.86,12.48
+mbv2_p75_fp32_s2,0.75,2,minmax,69.18,57.40,11.78
+mbv2_p75_fp32_s2,0.75,2,percentile 99.999,69.18,58.18,11.00
+mbv2_p75_fp32_s2,0.75,2,percentile 99.99,69.18,60.78,8.40
+mbv2_p75_fp32_s2,0.75,2,percentile 99.9,69.18,59.12,10.06
+mbv2_p00_fp32_s3,0.0,3,minmax,99.14,96.74,2.40
+mbv2_p00_fp32_s3,0.0,3,percentile 99.999,99.14,96.52,2.62
+mbv2_p00_fp32_s3,0.0,3,percentile 99.99,99.14,96.44,2.70
+mbv2_p00_fp32_s3,0.0,3,percentile 99.9,99.14,95.66,3.48
+mbv2_p25_fp32_s3,0.25,3,minmax,94.60,92.18,2.42
+mbv2_p25_fp32_s3,0.25,3,percentile 99.999,94.60,91.56,3.04
+mbv2_p25_fp32_s3,0.25,3,percentile 99.99,94.60,90.98,3.62
+mbv2_p25_fp32_s3,0.25,3,percentile 99.9,94.60,89.96,4.64
+mbv2_p50_fp32_s3,0.5,3,minmax,82.90,80.88,2.02
+mbv2_p50_fp32_s3,0.5,3,percentile 99.999,82.90,81.52,1.38
+mbv2_p50_fp32_s3,0.5,3,percentile 99.99,82.90,80.86,2.04
+mbv2_p50_fp32_s3,0.5,3,percentile 99.9,82.90,79.28,3.62
+mbv2_p75_fp32_s3,0.75,3,minmax,67.74,65.36,2.38
+mbv2_p75_fp32_s3,0.75,3,percentile 99.999,67.74,64.86,2.88
+mbv2_p75_fp32_s3,0.75,3,percentile 99.99,67.74,64.94,2.80
+mbv2_p75_fp32_s3,0.75,3,percentile 99.9,67.74,64.02,3.72
