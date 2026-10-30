@@ -1,2 +1,9 @@
-model,board,clock_mhz,latency_ms,cycles,flash_kb,ram_kb,external_memory,st_edge_ai
-mbv2_p00_fp32,STM32H7B3I-DK,280,427.165,119606311,1591.1,273.4,no,4.1.0
+model,pruning,quant,board,clock_mhz,latency_ms,cycles,flash_kb,ram_kb,weights_kb,activations_kb,optimization,external_memory,st_edge_ai,board_vs_onnx_cos
+mbv2_p00_fp32_s1,0.0,fp32,STM32H7B3I-DK,280,427.165,119606311,1591.1,273.4,1569.9,270.0,balanced,no,4.1.0,1.000000
+mbv2_p00_ptq_s1,0.0,ptq,STM32H7B3I-DK,280,100.489,28136903,475.1,136.9,413.1,132.8,balanced,no,4.1.0,1.000000
+mbv2_p25_fp32_s1,0.25,fp32,STM32H7B3I-DK,280,289.948,81185381,936.4,220.9,915.1,217.5,balanced,no,4.1.0,1.000000
+mbv2_p25_ptq_s1,0.25,ptq,STM32H7B3I-DK,280,84.211,23579205,297.3,84.4,244.3,80.3,ram,no,4.1.0,1.000000
+mbv2_p50_fp32_s1,0.5,fp32,STM32H7B3I-DK,280,165.394,46310430,456.6,151.4,435.2,147.9,balanced,no,4.1.0,1.000000
+mbv2_p50_ptq_s1,0.5,ptq,STM32H7B3I-DK,280,42.256,11831799,167.3,42.4,119.1,38.3,balanced,no,4.1.0,1.000000
+mbv2_p75_fp32_s1,0.75,fp32,STM32H7B3I-DK,280,70.029,19608149,151.3,115.4,130.2,112.0,balanced,no,4.1.0,1.000000
+mbv2_p75_ptq_s1,0.75,ptq,STM32H7B3I-DK,280,20.222,5662059,78.9,35.0,37.7,31.0,balanced,no,4.1.0,1.000000

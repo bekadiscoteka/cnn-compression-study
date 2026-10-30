@@ -15,7 +15,11 @@ finetune_epochs: 15        # same budget for every configuration
 finetune_lr: 0.01
 qat_epochs: 5              # quantization-aware fine-tuning, same for every ratio
 qat_lr: 0.001
-calibration_images: 500    # PTQ calibration set size
+calibration_images: 500    # calibration set size, same images for PTQ and QAT
+calibration:
+  method: auto             # auto = choice made by calibrate_check.py on a validation split; or minmax / percentile
+  percentile: 99.99        # used only when method is percentile
+results_file: results_v2.csv   # v1 (MinMax calibration, EMA ranges in QAT) archived as results_v1_minmax.csv
 
 pruning_ratios: [0.0, 0.25, 0.50, 0.75]
 quantization: [fp32, ptq, qat]

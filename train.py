@@ -15,6 +15,7 @@ import argparse
 import copy
 import csv
 import datetime
+import json
 import random
 import shutil
 import subprocess
@@ -31,7 +32,8 @@ import torch_pruning as tp
 import torchvision
 import torchvision.transforms as T
 import yaml
-from onnxruntime.quantization import CalibrationDataReader, QuantFormat, QuantType, quantize_static
+from onnxruntime.quantization import (CalibrationDataReader, CalibrationMethod, QuantFormat, QuantType,
+                                      quantize_static)
 from onnxruntime.quantization.shape_inference import quant_pre_process
 from torch.nn.utils.fusion import fuse_conv_bn_eval
 from torchvision.models.mobilenetv2 import InvertedResidual
@@ -116,7 +118,7 @@ def get_data(smoke, root, cache_dir):
     return train, calib, test
 
 
-def train(model, loader, epochs, lr, wd, device, ckpt=None):
+def train(model, loader, epochs, lr, wd, device, ckpt=None, epoch_start=None):
     opt = torch.optim.SGD(model.parameters(), lr=lr, momentum=0.9, weight_decay=wd, nesterov=True)
     sched = torch.optim.lr_scheduler.CosineAnnealingLR(opt, epochs * len(loader))
     scaler = torch.amp.GradScaler(enabled=device == "cuda")
@@ -128,6 +130,8 @@ def train(model, loader, epochs, lr, wd, device, ckpt=None):
         sched.load_state_dict(state["sched"]); start = state["epoch"]
         print(f"  resumed from epoch {start}")
     for ep in range(start, epochs):
+        if epoch_start:
+            epoch_start()
         model.train()
         t, total = time.time(), 0.0
         for x, y in loader:
@@ -188,41 +192,89 @@ class WeightFakeQuant(nn.Module):
         return w + (torch.clamp(torch.round(w / s), -127, 127) * s - w).detach()
 
 
-def act_fake_quant_hook(state):
-    """int8 per-tensor asymmetric rounding of activations, range tracked as a moving average."""
+def calibration_indices(n_total, n):
+    """The same calibration images for every run, model and quantization method."""
+    return np.random.default_rng(0).choice(n_total, n, replace=False)
+
+
+def activation_points(model):
+    """Tensors that the int8 ONNX model quantizes: after ReLU6, after each block's
+    projection conv and after each residual add."""
+    points = [m for m in model.modules() if isinstance(m, nn.ReLU6)]
+    for blk in model.modules():
+        if isinstance(blk, InvertedResidual):
+            points.append(blk.conv[-2])
+            if blk.use_res_connect:
+                points.append(blk)
+    return points
+
+
+@torch.no_grad()
+def activation_ranges(model, points, images, calib, device):
+    """Activation ranges on the calibration images, computed as ONNX Runtime does:
+    min/max, or the central `percentile` % of values (cut evenly from both ends),
+    always widened to include zero."""
+    stats = {m: {"lo": float("inf"), "hi": float("-inf"), "samples": []} for m in points}
+
     def hook(module, inputs, out):
-        if module.training:
-            lo, hi = out.detach().min().clamp(max=0), out.detach().max().clamp(min=0)
-            if state["lo"] is None:
-                state["lo"], state["hi"] = lo, hi
-            else:
-                state["lo"], state["hi"] = 0.99 * state["lo"] + 0.01 * lo, 0.99 * state["hi"] + 0.01 * hi
-        if state["lo"] is None:
+        st, flat = stats[module], out.detach().float().flatten()
+        st["lo"], st["hi"] = min(st["lo"], flat.min().item()), max(st["hi"], flat.max().item())
+        if calib["method"] == "percentile":  # a large random sample stands in for ORT's histogram
+            st["samples"].append(flat[torch.randint(0, flat.numel(), (min(flat.numel(), 200_000),),
+                                                    device=flat.device)].cpu())
+
+    model.eval()
+    handles = [m.register_forward_hook(hook) for m in points]
+    for x in images.split(100):
+        model(x.to(device))
+    for h in handles:
+        h.remove()
+    ranges = {}
+    for m, st in stats.items():
+        lo, hi = st["lo"], st["hi"]
+        if calib["method"] == "percentile":
+            v, cut = torch.cat(st["samples"]).numpy(), (100 - calib["percentile"]) / 2
+            lo, hi = max(lo, float(np.percentile(v, cut))), min(hi, float(np.percentile(v, 100 - cut)))
+        ranges[m] = (min(lo, 0.0), max(hi, 0.0))
+    return ranges
+
+
+def act_fake_quant_hook(ranges, enabled):
+    """int8 per-tensor asymmetric rounding of an activation within a fixed range."""
+    def hook(module, inputs, out):
+        if not enabled["on"]:
             return out
-        s = ((state["hi"] - state["lo"]) / 255).clamp(min=1e-8)
-        zp = torch.round(-128 - state["lo"] / s)
+        lo, hi = ranges[module]
+        s = max((hi - lo) / 255, 1e-8)
+        zp = round(-128 - lo / s)
         q = (torch.clamp(torch.round(out / s) + zp, -128, 127) - zp) * s
         return out + (q - out).detach()
     return hook
 
 
-def qat(model, loader, epochs, lr, wd, device):
+def qat(model, loader, epochs, lr, wd, device, calib_images, calib):
     """Quantization-aware fine-tuning on the BN-folded model.
 
-    Weights and the activations that the int8 ONNX model quantizes (after ReLU6,
-    after each block's projection conv and after each residual add) are rounded
-    to int8 in the forward pass. Afterwards the hooks are removed and the weights
-    are left on the int8 grid, so the model goes through the same ONNX quantizer
-    as PTQ and gets an identical graph.
+    Weights and activations are rounded to int8 in the forward pass. Activation
+    ranges are computed on the calibration images with the same rule ONNX
+    Runtime uses, and refreshed before every epoch, so training sees the ranges
+    the deployed model will get. Afterwards the hooks are removed and the weights
+    are left on the int8 grid; the model then goes through the same ONNX
+    quantizer and calibration as PTQ and gets an identical graph.
     """
     fold_bn(model)
     layers = [m for m in model.modules() if isinstance(m, (nn.Conv2d, nn.Linear))]
     for m in layers:
         parametrize.register_parametrization(m, "weight", WeightFakeQuant())
-    act_points = [m for m in model.modules() if isinstance(m, (nn.ReLU6, InvertedResidual))]
-    act_points += [blk.conv[-2] for blk in model.modules() if isinstance(blk, InvertedResidual)]
-    handles = [m.register_forward_hook(act_fake_quant_hook({"lo": None, "hi": None})) for m in act_points]
-    train(model, loader, epochs, lr, wd, device)
+    points, ranges, enabled = activation_points(model), {}, {"on": False}
+    handles = [m.register_forward_hook(act_fake_quant_hook(ranges, enabled)) for m in points]
+
+    def refresh_ranges():
+        enabled["on"] = False
+        ranges.update(activation_ranges(model, points, calib_images, calib, device))
+        enabled["on"] = True
+
+    train(model, loader, epochs, lr, wd, device, epoch_start=refresh_ranges)
     for h in handles:
         h.remove()
     for m in layers:
@@ -244,22 +296,38 @@ class Calibration(CalibrationDataReader):
         return next(self.items, None)
 
 
-def quantize_int8(fp32_path, int8_path, calib_ds, n):
-    idx = np.random.default_rng(0).choice(len(calib_ds), n, replace=False)  # same images for every run
+def quantize_int8(fp32_path, int8_path, calib_ds, n, calib):
+    idx = calibration_indices(len(calib_ds), n)
     pre = int8_path.with_suffix(".pre.onnx")
     quant_pre_process(str(fp32_path), str(pre))
+    if calib["method"] == "percentile":
+        method, extra = CalibrationMethod.Percentile, {"CalibPercentile": calib["percentile"]}
+    else:
+        method, extra = CalibrationMethod.MinMax, {}
     quantize_static(str(pre), str(int8_path), Calibration(calib_ds, idx), quant_format=QuantFormat.QDQ,
-                    per_channel=True, activation_type=QuantType.QInt8, weight_type=QuantType.QInt8)
+                    per_channel=True, activation_type=QuantType.QInt8, weight_type=QuantType.QInt8,
+                    calibrate_method=method, extra_options=extra)
     pre.unlink()
+
+
+def resolve_calibration(cfg, out):
+    """config.yaml calibration, or the choice written by calibrate_check.py when method is 'auto'."""
+    calib = dict(cfg["calibration"])
+    if calib["method"] == "auto":
+        choice = out / "calibration_choice.json"
+        if not choice.exists():
+            raise SystemExit(f"{choice} not found: run calibrate_check.py first")
+        calib = json.loads(choice.read_text())
+    return calib
 
 
 # ---------------------------------------------------------------- one cell of the matrix
 
-def run_cell(p, seed, cfg, data, out, device, smoke):
-    csv_path, models = out / "results.csv", out / "models"
+def run_cell(p, seed, cfg, calib, data, out, device, smoke):
+    csv_path, models = out / cfg["results_file"], out / "models"
     todo = [q for q in QUANTS if run_id(p, q, seed) not in done_runs(csv_path)]
     if not todo:
-        print(f"[skip] {tag(p)} seed {seed}: already in results.csv")
+        print(f"[skip] {tag(p)} seed {seed}: already in {csv_path.name}")
         return
     print(f"\n=== {tag(p)} seed {seed}: {', '.join(todo)} ===", flush=True)
     t0 = time.time()
@@ -300,14 +368,17 @@ def run_cell(p, seed, cfg, data, out, device, smoke):
     if not paths["fp32"].exists():
         export_onnx(model, paths["fp32"])
     if "ptq" in todo:
-        quantize_int8(paths["fp32"], paths["ptq"], calib_ds, cfg["calibration_images"])
+        quantize_int8(paths["fp32"], paths["ptq"], calib_ds, cfg["calibration_images"], calib)
     if "qat" in todo:
         print("  quantization-aware fine-tuning")
         set_seed(seed)
-        qat_model = qat(copy.deepcopy(model), loader, cfg["qat_epochs"], cfg["qat_lr"], wd, device)
+        idx = calibration_indices(len(calib_ds), cfg["calibration_images"])
+        calib_images = torch.stack([calib_ds[int(i)][0] for i in idx])
+        qat_model = qat(copy.deepcopy(model), loader, cfg["qat_epochs"], cfg["qat_lr"], wd, device,
+                        calib_images, calib)
         qat_fp32 = models / f"{tag(p)}_qatfp32_s{seed}.onnx"
         export_onnx(qat_model, qat_fp32)
-        quantize_int8(qat_fp32, paths["qat"], calib_ds, cfg["calibration_images"])
+        quantize_int8(qat_fp32, paths["qat"], calib_ds, cfg["calibration_images"], calib)
         qat_fp32.unlink()
 
     common = {"date": datetime.date.today().isoformat(), "commit": git_commit(), "pruning": p,
@@ -316,6 +387,8 @@ def run_cell(p, seed, cfg, data, out, device, smoke):
     for q in todo:
         acc = eval_onnx(paths[q], test_ds)
         note = f"torch_acc={torch_acc:.2f}" if q == "fp32" else ""
+        if q != "fp32":
+            note = f"calibration={calib['method']}" + (f" {calib['percentile']}" if calib["method"] == "percentile" else "")
         rows.append({**common, "run_id": run_id(p, q, seed), "quant": q, "accuracy": f"{acc:.2f}",
                      "notes": ("smoke " if smoke else "") + note})
         print(f"  {q:4s} accuracy {acc:6.2f}%   {paths[q].stat().st_size / 1024:5.0f} KB")
@@ -342,16 +415,18 @@ def main():
     (out / "models").mkdir(parents=True, exist_ok=True)
     device = "cuda" if torch.cuda.is_available() else "cpu"
     print(f"Device {device}, commit {git_commit()}, {len(seeds)} seed(s) x {len(ratios)} pruning ratio(s)")
+    calib = resolve_calibration(cfg, out)
+    print(f"Calibration: {calib}, results in {cfg['results_file']}")
     data = get_data(args.smoke, HERE / "data", out)  # data on local disk: much faster than Drive
 
     for seed in seeds:  # one seed at a time: a full picture appears after the first seed
         for p in ratios:
-            run_cell(p, seed, cfg, data, out, device, args.smoke)
+            run_cell(p, seed, cfg, calib, data, out, device, args.smoke)
 
-    done = done_runs(out / "results.csv")
+    done = done_runs(out / cfg["results_file"])
     expected = {run_id(p, q, s) for s in cfg["seeds"] for p in cfg["pruning_ratios"] for q in QUANTS}
     onnx = len(list((out / "models").glob("*_s[0-9].onnx")))
-    print(f"\nProgress: {len(done & expected)}/{len(expected)} rows in results.csv, {onnx} ONNX models")
+    print(f"\nProgress: {len(done & expected)}/{len(expected)} rows in {cfg['results_file']}, {onnx} ONNX models")
     missing = sorted(expected - done)
     if missing:
         print("Missing:", ", ".join(missing))
