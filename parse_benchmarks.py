@@ -1,6 +1,6 @@
-"""Collects ST Edge AI benchmark logs into hardware.csv.
+"""Collects ST Edge AI benchmark logs into results/hardware.csv.
 
-Expects one folder per model in benchmarks/, named like mbv2_p25_ptq_s1, holding
+Expects one folder per model in results/benchmarks/, named like mbv2_p25_ptq_s1, holding
 the logs downloaded from ST Edge AI Developer Cloud (file names may vary; the
 script looks for the generate, validation and flashing logs by keyword).
 Checks that all runs share board, clock, tool version and settings, and that
@@ -59,8 +59,8 @@ def parse(folder):
 
 
 def main():
-    rows = [parse(d) for d in sorted((HERE / "benchmarks").iterdir()) if d.is_dir()]
-    with open(HERE / "hardware.csv", "w", newline="") as f:
+    rows = [parse(d) for d in sorted((HERE / "results" / "benchmarks").iterdir()) if d.is_dir()]
+    with open(HERE / "results" / "hardware.csv", "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=FIELDS)
         w.writeheader()
         w.writerows(rows)
@@ -71,7 +71,7 @@ def main():
         values = {r[key] for r in rows}
         if len(values) > 1:
             print(f"WARNING: runs differ in {key}: " + ", ".join(f"{r['model']}={r[key]}" for r in rows))
-    print(f"{len(rows)} models written to hardware.csv")
+    print(f"{len(rows)} models written to results/hardware.csv")
 
 
 if __name__ == "__main__":

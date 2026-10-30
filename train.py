@@ -42,8 +42,7 @@ HERE = Path(__file__).resolve().parent
 warnings.filterwarnings("ignore", category=DeprecationWarning)  # legacy ONNX exporter notice
 warnings.filterwarnings("ignore", message="Detected call of `lr_scheduler.step()`")  # harmless with AMP
 MEAN, STD = (0.4914, 0.4822, 0.4465), (0.2470, 0.2435, 0.2616)
-FIELDS = ["run_id", "date", "commit", "pruning", "quant", "seed", "accuracy", "params", "macs",
-          "latency_ms", "flash_kb", "ram_kb", "energy_mj", "notes"]
+FIELDS = ["run_id", "date", "commit", "pruning", "quant", "seed", "accuracy", "params", "macs", "notes"]
 QUANTS = ["fp32", "ptq", "qat"]
 
 
@@ -81,8 +80,9 @@ def done_runs(csv_path):
 
 def append_rows(csv_path, rows):
     new = not csv_path.exists()
+    fields = FIELDS if new else next(csv.reader(open(csv_path)))  # follow an existing file's columns
     with open(csv_path, "a", newline="") as f:
-        w = csv.DictWriter(f, fieldnames=FIELDS, restval="")
+        w = csv.DictWriter(f, fieldnames=fields, restval="", extrasaction="ignore")
         if new:
             w.writeheader()
         w.writerows(rows)
