@@ -25,6 +25,7 @@ selection_rule:
   max_accuracy_drop_pp: 1.0   # best = lowest energy within 1 pp of fp32 baseline
 
 hardware:
-  board: NUCLEO-H743ZI2       # STM32H743ZI, Cortex-M7, 2 MB Flash, 1 MB RAM; fixed for every run
-  clock_mhz: TBD              # board default maximum in ST Edge AI Developer Cloud; copy from the report
+  board: STM32H7B3I-DK        # STM32H7B3, Cortex-M7, 2 MB internal Flash, 1.4 MB RAM; fixed for every run
+  clock_mhz: 280              # board default maximum in ST Edge AI Developer Cloud
+  st_edge_ai: 4.1.0
   st_optimization: balanced   # code-generation objective; I/O buffers inside activation buffer (default)

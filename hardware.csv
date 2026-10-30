@@ -1,0 +1,2 @@
+model,board,clock_mhz,latency_ms,cycles,flash_kb,ram_kb,external_memory,st_edge_ai
+mbv2_p00_fp32,STM32H7B3I-DK,280,427.165,119606311,1591.1,273.4,no,4.1.0
