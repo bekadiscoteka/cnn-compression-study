@@ -1,0 +1,183 @@
+
+C:\ST\STEdgeAI\4.1\Utilities\windows\stedgeai.exe C:\ST\STEdgeAI\4.1\Utilities\windows\stedgeai.exe validate --batch-size 1 --mode target --desc serial:COM11:115200 --no-check --memory-pool C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-project-directory-8b03c325-514f-4863-af96-b87a95a95322\STM32H7B3I-DK\.ai\mempools.json --val-json C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-project-directory-8b03c325-514f-4863-af96-b87a95a95322\STM32H7B3I-DK\.ai\st_ai_output\network_c_info.json --target stm32h7 --optimization balanced --name network --verbosity 1 --c-api st-ai --model C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-project-directory-8b03c325-514f-4863-af96-b87a95a95322\STM32H7B3I-DK\Copyofmbv2_p50_fp32_s1.onnx --workspace C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-workspace-directory-b081dc5f-9f33-4cef-bdb7-f09eaf53c079 --output C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-output-directory-45bfbfe0-3a59-4ad2-85ba-b806d725b780ST Edge AI Core v4.1.0-20732 33a7f37f5
+Setting validation data...
+ generating random data, size=1, seed=42, range=(0, 1)
+   I[1]: (1, 3, 32, 32)/float32, min/max=[0.000012, 0.999718], mean/std=[0.499174, 0.291228]
+ no output/reference samples are provided
+Running the ONNX model...
+Running the ST.AI c-model (AI RUNNER)...(name=network, mode=TARGET)
+ Proto-buffer driver v2.2 (msg v3.2) (Serial driver v1.0 - COM11:115200) ['network']
+  Summary 'network' - ['network']
+  ----------------------------------------------------------------------------------------------------
+  I[1 / 1] 'input_1'    :   f32[1,3,32,32], 12288 Bytes, activations
+  O[1 / 1] 'output_1'   :   f32[1,10], 40 Bytes, activations
+  n_nodes               :   100
+  activations           :   151500 [46764, 104736] (2 segments)
+  weights               :   445672
+  macc                  :   5247690
+  hash                  :   0xdf3d666393e769d0182d7b4d5d50dd0d
+  compile_datetime      :   Oct 30 2026 18:20:25
+  ----------------------------------------------------------------------------------------------------
+  protocol              :   Proto-buffer driver v2.2 (msg v3.2) (Serial driver v1.0 - COM11:115200)
+  tools                 :   ST.AI (st-ai api) v4.1.0
+  runtime lib           :   v12.1.0-8f43e560 compiled with GCC 13.3.1 (GCC)
+  capabilities          :   IO_ONLY, PER_LAYER, PER_LAYER_WITH_DATA
+  device.desc           :   UNKNOWN family - 0x0 - UNKNOWN @280/140MHz
+  device.attrs          :   fpu,art_lat=3,core_icache,core_dcache
+  ----------------------------------------------------------------------------------------------------
+ Warning: C-network signature checking has been skipped
+  ST.AI Profiling results v2.0 - "network"
+  ----------------------------------------------------------------------------------
+  nb sample(s)                   :   1
+  duration                       :   165.394 ms by sample (165.394/165.394/0.000)
+  macc                           :   5247690
+  cycles/MACC                    :   8.82
+  CPU cycles                     :   [46,310,430]
+  network initialize time (ms)   :   0.003
+  ----------------------------------------------------------------------------------
+   Inference time per node
+   ----------------------------------------------------------------------------------------------------------------
+   c_id    m_id   type                                   dur (ms)       %     cumul  CPU cycles       name
+   ----------------------------------------------------------------------------------------------------------------
+   0       2      Transpose (0x10a) - Transpose             0.750   0.45%     0.45%  [    210,072 ]   ai_node_0
+   1       1      Conv2D (0x103) - Conv2D                   6.757   4.09%     4.54%  [  1,892,064 ]   ai_node_1
+   2       4      NL (0x107) - Nonlinearity (clip)          0.205   0.12%     4.66%  [     57,532 ]   ai_node_2
+   3       5      Conv2D (0x103) - Conv2D_DW                3.878   2.34%     7.01%  [  1,085,744 ]   ai_node_3
+   4       8      NL (0x107) - Nonlinearity (clip)          0.205   0.12%     7.13%  [     57,420 ]   ai_node_4
+   5       9      Conv2D (0x103) - Conv2D                   1.399   0.85%     7.98%  [    391,773 ]   ai_node_5
+   6       10     Conv2D (0x103) - Conv2D                   6.144   3.71%    11.69%  [  1,720,214 ]   ai_node_6
+   7       13     NL (0x107) - Nonlinearity (clip)          0.712   0.43%    12.12%  [    199,462 ]   ai_node_7
+   8       14     Conv2D (0x103) - Conv2D_DW               11.464   6.93%    19.05%  [  3,209,891 ]   ai_node_8
+   9       17     NL (0x107) - Nonlinearity (clip)          0.716   0.43%    19.49%  [    200,362 ]   ai_node_9
+   10      18     Conv2D (0x103) - Conv2D                   2.567   1.55%    21.04%  [    718,763 ]   ai_node_10
+   11      19     Conv2D (0x103) - Conv2D                   6.144   3.71%    24.75%  [  1,720,288 ]   ai_node_11
+   12      22     NL (0x107) - Nonlinearity (clip)          0.712   0.43%    25.18%  [    199,276 ]   ai_node_12
+   13      23     Conv2D (0x103) - Conv2D_DW               11.464   6.93%    32.12%  [  3,209,824 ]   ai_node_13
+   14      26     NL (0x107) - Nonlinearity (clip)          0.715   0.43%    32.55%  [    200,336 ]   ai_node_14
+   15      27     Conv2D (0x103) - Conv2D                   2.563   1.55%    34.10%  [    717,688 ]   ai_node_15
+   16      28     Eltwise (0x113) - Eltwise (add)           0.076   0.05%    34.14%  [     21,171 ]   ai_node_16
+   17      29     Conv2D (0x103) - Conv2D                   6.146   3.72%    37.86%  [  1,720,745 ]   ai_node_17
+   18      32     NL (0x107) - Nonlinearity (clip)          0.712   0.43%    38.29%  [    199,441 ]   ai_node_18
+   19      33     Conv2D (0x103) - Conv2D_DW                2.936   1.78%    40.06%  [    822,019 ]   ai_node_19
+   20      36     NL (0x107) - Nonlinearity (clip)          0.154   0.09%    40.16%  [     43,149 ]   ai_node_20
+   21      37     Conv2D (0x103) - Conv2D                   1.209   0.73%    40.89%  [    338,479 ]   ai_node_21
+   22      38     Conv2D (0x103) - Conv2D                   4.172   2.52%    43.41%  [  1,168,176 ]   ai_node_22
+   23      41     NL (0x107) - Nonlinearity (clip)          0.355   0.21%    43.63%  [     99,492 ]   ai_node_23
+   24      42     Conv2D (0x103) - Conv2D_DW                5.551   3.36%    46.98%  [  1,554,404 ]   ai_node_24
+   25      45     NL (0x107) - Nonlinearity (clip)          0.355   0.21%    47.20%  [     99,300 ]   ai_node_25
+   26      46     Conv2D (0x103) - Conv2D                   1.862   1.13%    48.32%  [    521,234 ]   ai_node_26
+   27      47     Eltwise (0x113) - Eltwise (add)           0.039   0.02%    48.35%  [     10,797 ]   ai_node_27
+   28      48     Conv2D (0x103) - Conv2D                   4.172   2.52%    50.87%  [  1,168,028 ]   ai_node_28
+   29      51     NL (0x107) - Nonlinearity (clip)          0.351   0.21%    51.08%  [     98,146 ]   ai_node_29
+   30      52     Conv2D (0x103) - Conv2D_DW                5.569   3.37%    54.45%  [  1,559,369 ]   ai_node_30
+   31      55     NL (0x107) - Nonlinearity (clip)          0.356   0.22%    54.66%  [     99,728 ]   ai_node_31
+   32      56     Conv2D (0x103) - Conv2D                   1.860   1.12%    55.79%  [    520,939 ]   ai_node_32
+   33      57     Eltwise (0x113) - Eltwise (add)           0.038   0.02%    55.81%  [     10,779 ]   ai_node_33
+   34      58     Conv2D (0x103) - Conv2D                   4.172   2.52%    58.33%  [  1,168,074 ]   ai_node_34
+   35      61     NL (0x107) - Nonlinearity (clip)          0.355   0.21%    58.55%  [     99,450 ]   ai_node_35
+   36      62     Conv2D (0x103) - Conv2D_DW                1.426   0.86%    59.41%  [    399,250 ]   ai_node_36
+   37      65     NL (0x107) - Nonlinearity (clip)          0.077   0.05%    59.46%  [     21,640 ]   ai_node_37
+   38      66     Conv2D (0x103) - Conv2D                   0.686   0.41%    59.87%  [    191,985 ]   ai_node_38
+   39      67     Conv2D (0x103) - Conv2D                   1.991   1.20%    61.07%  [    557,468 ]   ai_node_39
+   40      70     NL (0x107) - Nonlinearity (clip)          0.116   0.07%    61.14%  [     32,357 ]   ai_node_40
+   41      71     Conv2D (0x103) - Conv2D_DW                1.938   1.17%    62.32%  [    542,545 ]   ai_node_41
+   42      74     NL (0x107) - Nonlinearity (clip)          0.116   0.07%    62.39%  [     32,386 ]   ai_node_42
+   43      75     Conv2D (0x103) - Conv2D                   1.033   0.62%    63.01%  [    289,263 ]   ai_node_43
+   44      76     Eltwise (0x113) - Eltwise (add)           0.016   0.01%    63.02%  [      4,373 ]   ai_node_44
+   45      77     Conv2D (0x103) - Conv2D                   1.992   1.20%    64.22%  [    557,637 ]   ai_node_45
+   46      80     NL (0x107) - Nonlinearity (clip)          0.116   0.07%    64.29%  [     32,374 ]   ai_node_46
+   47      81     Conv2D (0x103) - Conv2D_DW                1.937   1.17%    65.47%  [    542,448 ]   ai_node_47
+   48      84     NL (0x107) - Nonlinearity (clip)          0.116   0.07%    65.54%  [     32,353 ]   ai_node_48
+   49      85     Conv2D (0x103) - Conv2D                   1.039   0.63%    66.16%  [    291,054 ]   ai_node_49
+   50      86     Eltwise (0x113) - Eltwise (add)           0.016   0.01%    66.17%  [      4,370 ]   ai_node_50
+   51      87     Conv2D (0x103) - Conv2D                   1.991   1.20%    67.38%  [    557,581 ]   ai_node_51
+   52      90     NL (0x107) - Nonlinearity (clip)          0.116   0.07%    67.45%  [     32,399 ]   ai_node_52
+   53      91     Conv2D (0x103) - Conv2D_DW                1.937   1.17%    68.62%  [    542,492 ]   ai_node_53
+   54      94     NL (0x107) - Nonlinearity (clip)          0.116   0.07%    68.69%  [     32,407 ]   ai_node_54
+   55      95     Conv2D (0x103) - Conv2D                   1.034   0.63%    69.31%  [    289,591 ]   ai_node_55
+   56      96     Eltwise (0x113) - Eltwise (add)           0.016   0.01%    69.32%  [      4,403 ]   ai_node_56
+   57      97     Conv2D (0x103) - Conv2D                   1.992   1.20%    70.53%  [    557,669 ]   ai_node_57
+   58      100    NL (0x107) - Nonlinearity (clip)          0.116   0.07%    70.60%  [     32,396 ]   ai_node_58
+   59      101    Conv2D (0x103) - Conv2D_DW                1.937   1.17%    71.77%  [    542,499 ]   ai_node_59
+   60      104    NL (0x107) - Nonlinearity (clip)          0.116   0.07%    71.84%  [     32,362 ]   ai_node_60
+   61      105    Conv2D (0x103) - Conv2D                   1.377   0.83%    72.67%  [    385,547 ]   ai_node_61
+   62      106    Conv2D (0x103) - Conv2D                   2.441   1.48%    74.15%  [    683,415 ]   ai_node_62
+   63      109    NL (0x107) - Nonlinearity (clip)          0.154   0.09%    74.24%  [     43,154 ]   ai_node_63
+   64      110    Conv2D (0x103) - Conv2D_DW                2.579   1.56%    75.80%  [    722,111 ]   ai_node_64
+   65      113    NL (0x107) - Nonlinearity (clip)          0.154   0.09%    75.89%  [     43,154 ]   ai_node_65
+   66      114    Conv2D (0x103) - Conv2D                   1.653   1.00%    76.89%  [    462,887 ]   ai_node_66
+   67      115    Eltwise (0x113) - Eltwise (add)           0.020   0.01%    76.90%  [      5,681 ]   ai_node_67
+   68      116    Conv2D (0x103) - Conv2D                   2.438   1.47%    78.38%  [    682,713 ]   ai_node_68
+   69      119    NL (0x107) - Nonlinearity (clip)          0.154   0.09%    78.47%  [     43,117 ]   ai_node_69
+   70      120    Conv2D (0x103) - Conv2D_DW                2.579   1.56%    80.03%  [    722,102 ]   ai_node_70
+   71      123    NL (0x107) - Nonlinearity (clip)          0.154   0.09%    80.12%  [     43,084 ]   ai_node_71
+   72      124    Conv2D (0x103) - Conv2D                   1.653   1.00%    81.12%  [    462,940 ]   ai_node_72
+   73      125    Eltwise (0x113) - Eltwise (add)           0.020   0.01%    81.14%  [      5,623 ]   ai_node_73
+   74      126    Conv2D (0x103) - Conv2D                   2.441   1.48%    82.61%  [    683,561 ]   ai_node_74
+   75      129    NL (0x107) - Nonlinearity (clip)          0.154   0.09%    82.71%  [     43,201 ]   ai_node_75
+   76      130    Conv2D (0x103) - Conv2D_DW                0.650   0.39%    83.10%  [    182,106 ]   ai_node_76
+   77      133    NL (0x107) - Nonlinearity (clip)          0.039   0.02%    83.12%  [     10,850 ]   ai_node_77
+   78      134    Conv2D (0x103) - Conv2D                   0.743   0.45%    83.57%  [    207,954 ]   ai_node_78
+   79      135    Conv2D (0x103) - Conv2D                   1.922   1.16%    84.73%  [    538,199 ]   ai_node_79
+   80      138    NL (0x107) - Nonlinearity (clip)          0.068   0.04%    84.77%  [     18,925 ]   ai_node_80
+   81      139    Conv2D (0x103) - Conv2D_DW                1.016   0.61%    85.39%  [    284,385 ]   ai_node_81
+   82      142    NL (0x107) - Nonlinearity (clip)          0.068   0.04%    85.43%  [     18,922 ]   ai_node_82
+   83      143    Conv2D (0x103) - Conv2D                   1.302   0.79%    86.22%  [    364,500 ]   ai_node_83
+   84      144    Eltwise (0x113) - Eltwise (add)           0.010   0.01%    86.22%  [      2,754 ]   ai_node_84
+   85      145    Conv2D (0x103) - Conv2D                   1.921   1.16%    87.38%  [    537,773 ]   ai_node_85
+   86      148    NL (0x107) - Nonlinearity (clip)          0.068   0.04%    87.42%  [     18,941 ]   ai_node_86
+   87      149    Conv2D (0x103) - Conv2D_DW                1.013   0.61%    88.04%  [    283,700 ]   ai_node_87
+   88      152    NL (0x107) - Nonlinearity (clip)          0.068   0.04%    88.08%  [     18,934 ]   ai_node_88
+   89      153    Conv2D (0x103) - Conv2D                   1.316   0.80%    88.87%  [    368,561 ]   ai_node_89
+   90      154    Eltwise (0x113) - Eltwise (add)           0.010   0.01%    88.88%  [      2,768 ]   ai_node_90
+   91      155    Conv2D (0x103) - Conv2D                   1.922   1.16%    90.04%  [    538,058 ]   ai_node_91
+   92      158    NL (0x107) - Nonlinearity (clip)          0.068   0.04%    90.08%  [     18,994 ]   ai_node_92
+   93      159    Conv2D (0x103) - Conv2D_DW                1.013   0.61%    90.69%  [    283,620 ]   ai_node_93
+   94      162    NL (0x107) - Nonlinearity (clip)          0.068   0.04%    90.74%  [     18,916 ]   ai_node_94
+   95      163    Conv2D (0x103) - Conv2D                   2.704   1.63%    92.37%  [    757,035 ]   ai_node_95
+   96      164    Conv2D (0x103) - Conv2D                  12.015   7.26%    99.63%  [  3,364,166 ]   ai_node_96
+   97      167    NL (0x107) - Nonlinearity (clip)          0.256   0.16%    99.79%  [     71,799 ]   ai_node_97
+   98      168    Pool (0x10b) - Pool_Avg                   0.214   0.13%    99.92%  [     59,796 ]   ai_node_98
+   99      170    Dense (0x104) - Dense                     0.134   0.08%   100.00%  [     37,553 ]   ai_node_99
+   ----------------------------------------------------------------------------------------------------------------
+   total                                                  165.394                    [ 46,310,430 ]
+                                                       6.05 inf/s
+   ----------------------------------------------------------------------------------------------------------------
+   Statistic per tensor
+   -----------------------------------------------------------------------------------
+   tensor   #   type[shape]:size            min     max     mean      std  name
+   -----------------------------------------------------------------------------------
+   I.0      1   f32[1,3,32,32]:12288      0.000   1.000    0.499    0.291  input_1
+   O.0      1   f32[1,10]:40             -7.314   8.864   -0.025    5.123  output_1
+   -----------------------------------------------------------------------------------
+Saving validation data...
+ output directory: C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-output-directory-45bfbfe0-3a59-4ad2-85ba-b806d725b780
+ creating C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-output-directory-45bfbfe0-3a59-4ad2-85ba-b806d725b780\network_val_io.npz
+ m_outputs_1: (1, 10)/float64, min/max=[-7.314144, 8.863745], mean/std=[-0.024508, 5.123377], logits
+ c_outputs_1: (1, 10)/float32, min/max=[-7.314146, 8.863744], mean/std=[-0.024508, 5.123377], logits
+Computing the metrics...
+ Cross accuracy report #1 (reference vs C-model)
+ ----------------------------------------------------------------------------------------------------
+ notes: - data type is different: r/float64 instead p/float32
+        - ACC metric is not computed ("--classifier" option can be used to force it)
+        - the output of the reference model is used as ground truth/reference value
+        - 1 samples (10 items per sample)
+  acc=n.a. rmse=0.000001157 mae=0.000000840 l2r=0.000000226 mean=0.000000 std=0.000001 snr=132.927979 nse=1.000000 cos=1.000000
+ Evaluation report (summary)
+ --------------------------------------------------------------------------------------------------------------------------------
+ Output       acc    rmse          mae           l2r           mean       std        snr          nse        cos        tensor
+ --------------------------------------------------------------------------------------------------------------------------------
+ X-cross #1   n.a.   0.000001157   0.000000840   0.000000226   0.000000   0.000001   132.927979   1.000000   1.000000   logits
+ --------------------------------------------------------------------------------------------------------------------------------
+  acc  : Accuracy (class, axis=-1)
+  rmse : Root Mean Squared Error
+  mae  : Mean Absolute Error
+  l2r  : L2 relative error
+  mean : Mean error
+  std  : Standard deviation error
+  snr  : Signal-to-Noise Ratio (SNR), bigger is better
+  nse  : Nash-Sutcliffe efficiency criteria, bigger is better, best=1, range=(-inf, 1]
+  cos  : COsine Similarity, bigger is better, best=1, range=(0, 1]
+Creating txt report file C:/Users/aiprod/AppData/Local/Temp/benchmark-ai-output-directory-45bfbfe0-3a59-4ad2-85ba-b806d725b780/network_validate_report.txt
+elapsed time (VALIDATE): 6.465s
+

@@ -1,0 +1,45 @@
+
+      -------------------------------------------------------------------
+                       STM32CubeProgrammer v2.23.0                  
+      -------------------------------------------------------------------
+
+ST-LINK SN  : 002A00164741500420383733
+ST-LINK FW  : V3J9M3
+Board       : STM32H7B3I-DK
+Voltage     : 3.32V
+SWD freq    : 8000 KHz
+Connect mode: Under Reset
+Reset mode  : Hardware reset
+Device ID   : 0x480
+Revision ID : Rev X
+Device name : STM32H7A/B
+NVM size    : 2 MBytes
+Device type : MCU
+Device CPU  : Cortex-M7
+BL Version  : 0x91
+
+
+
+Opening and parsing file: STM32H7B3I-DK.elf
+
+
+Memory Programming ...
+  File          : STM32H7B3I-DK.elf
+  Size          : 529.00 KB 
+  Address       : 0x08000000
+
+
+Erasing memory corresponding to segment 0:
+Erasing internal memory sectors [0 66]
+Download in Progress:
+�������������������������������������������������� 0%
+�������������������������������������������������� 100%
+
+File download complete
+Time elapsed during download operation: 00:00:02.163
+
+RUNNING Program ... 
+  Address:      : 0x8000000
+Application is running, Please Hold on...
+Start operation achieved successfully
+
