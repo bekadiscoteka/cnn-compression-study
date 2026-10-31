@@ -1,0 +1,168 @@
+
+C:\ST\STEdgeAI\4.1\Utilities\windows\stedgeai.exe C:\ST\STEdgeAI\4.1\Utilities\windows\stedgeai.exe validate --batch-size 1 --mode target --desc serial:COM6:115200 --no-check --memory-pool C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-project-directory-23823ae5-da3c-4432-9f1a-4341708836ab\STM32H7B3I-DK\.ai\mempools.json --val-json C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-project-directory-23823ae5-da3c-4432-9f1a-4341708836ab\STM32H7B3I-DK\.ai\st_ai_output\network_c_info.json --target stm32h7 --optimization balanced --name network --verbosity 1 --c-api st-ai --model C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-project-directory-23823ae5-da3c-4432-9f1a-4341708836ab\STM32H7B3I-DK\Copyofmbv2_p00_qat_s1.onnx --workspace C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-workspace-directory-65224e44-cec9-4203-bb5b-c15fba02ba98 --output C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-output-directory-ed125ede-e406-423e-acc4-5d6df67abeb5ST Edge AI Core v4.1.0-20732 33a7f37f5
+Setting validation data...
+ generating random data, size=1, seed=42, range=(0, 1)
+   I[1]: (1, 3, 32, 32)/float32, min/max=[-1.985299, 2.129454], mean/std=[0.069235, 1.198683]
+    c/I[1] conversion [Q(0.01614103,-5)]-> (1, 3, 32, 32)/int8, min/max=[-128, 127], mean/std=[-0.711589, 74.264038]
+    m/I[1] no modification.
+ no output/reference samples are provided
+Running the ONNX model...
+Running the ST.AI c-model (AI RUNNER)...(name=network, mode=TARGET)
+ Proto-buffer driver v2.2 (msg v3.2) (Serial driver v1.0 - COM6:115200) ['network']
+  Summary 'network' - ['network']
+  ---------------------------------------------------------------------------------------------------
+  I[1 / 1] 'input_1'    :   int8[1,3,32,32], 3072 Bytes, QLinear(0.016141029,-5,int8), activations
+  O[1 / 1] 'output_1'   :   int8[1,10], 10 Bytes, QLinear(0.264633596,-48,int8), activations
+  n_nodes               :   82
+  activations           :   136004 [14980, 65536, 55488] (3 segments)
+  weights               :   423048
+  macc                  :   15667082
+  hash                  :   0x50d2ccf4863f2da8a0b5d7267936b91e
+  compile_datetime      :   Oct 31 2026 13:24:36
+  ---------------------------------------------------------------------------------------------------
+  protocol              :   Proto-buffer driver v2.2 (msg v3.2) (Serial driver v1.0 - COM6:115200)
+  tools                 :   ST.AI (st-ai api) v4.1.0
+  runtime lib           :   v12.1.0-8f43e560 compiled with GCC 13.3.1 (GCC)
+  capabilities          :   IO_ONLY, PER_LAYER, PER_LAYER_WITH_DATA
+  device.desc           :   UNKNOWN family - 0x0 - UNKNOWN @280/140MHz
+  device.attrs          :   fpu,art_lat=3,core_icache,core_dcache
+  ---------------------------------------------------------------------------------------------------
+ Warning: C-network signature checking has been skipped
+  ST.AI Profiling results v2.0 - "network"
+  ----------------------------------------------------------------------------------
+  nb sample(s)                   :   1
+  duration                       :   100.507 ms by sample (100.507/100.507/0.000)
+  macc                           :   15667082
+  cycles/MACC                    :   1.80
+  CPU cycles                     :   [28,141,973]
+  network initialize time (ms)   :   0.004
+  ----------------------------------------------------------------------------------
+   Inference time per node
+   ------------------------------------------------------------------------------------------------------------------
+   c_id    m_id   type                                     dur (ms)       %     cumul  CPU cycles       name
+   ------------------------------------------------------------------------------------------------------------------
+   0       2      Transpose (0x10a) - Transpose               0.437   0.43%     0.43%  [    122,319 ]   ai_node_0
+   1       109    Conv2dPool (0x109) - Conv2D                 3.588   3.57%     4.00%  [  1,004,639 ]   ai_node_1
+   2       112    Pad (0x116) - Pad                           0.034   0.03%     4.04%  [      9,475 ]   ai_node_2
+   3       112    Conv2D (0x103) - Conv2D_DW                  2.393   2.38%     6.42%  [    669,936 ]   ai_node_3
+   4       115    Conv2D (0x103) - Conv2D_PW                  0.663   0.66%     7.08%  [    185,708 ]   ai_node_4
+   5       118    Conv2D (0x103) - Conv2D_PW                  3.884   3.86%    10.94%  [  1,087,476 ]   ai_node_5
+   6       121    Pad (0x116) - Pad                           0.079   0.08%    11.02%  [     22,111 ]   ai_node_6
+   7       121    Conv2D (0x103) - Conv2D_DW                  7.008   6.97%    17.99%  [  1,962,306 ]   ai_node_7
+   8       124    Conv2D (0x103) - Conv2D_PW                  1.538   1.53%    19.53%  [    430,765 ]   ai_node_8
+   9       127    Conv2D (0x103) - Conv2D_PW                  3.509   3.49%    23.02%  [    982,583 ]   ai_node_9
+   10      130    Pad (0x116) - Pad                           0.095   0.09%    23.11%  [     26,689 ]   ai_node_10
+   11      130    Conv2D (0x103) - Conv2D_DW                  7.071   7.03%    30.15%  [  1,979,769 ]   ai_node_11
+   12      133    Conv2D (0x103) - Conv2D_PW                  1.374   1.37%    31.51%  [    384,626 ]   ai_node_12
+   13      136    EltwiseInt (0x114) - Eltwise (add)          0.217   0.22%    31.73%  [     60,679 ]   ai_node_13
+   14      139    Conv2D (0x103) - Conv2D_PW                  3.509   3.49%    35.22%  [    982,492 ]   ai_node_14
+   15      142    Pad (0x116) - Pad                           0.078   0.08%    35.30%  [     21,977 ]   ai_node_15
+   16      142    Conv2D (0x103) - Conv2D_DW                  1.764   1.76%    37.05%  [    493,947 ]   ai_node_16
+   17      145    Conv2D (0x103) - Conv2D_PW                  0.697   0.69%    37.75%  [    195,265 ]   ai_node_17
+   18      148    Conv2D (0x103) - Conv2D_PW                  2.010   2.00%    39.75%  [    562,704 ]   ai_node_18
+   19      151    Pad (0x116) - Pad                           0.043   0.04%    39.79%  [     12,083 ]   ai_node_19
+   20      151    Conv2D (0x103) - Conv2D_DW                  3.505   3.49%    43.28%  [    981,380 ]   ai_node_20
+   21      154    Conv2D (0x103) - Conv2D_PW                  1.211   1.20%    44.48%  [    339,065 ]   ai_node_21
+   22      157    EltwiseInt (0x114) - Eltwise (add)          0.110   0.11%    44.59%  [     30,775 ]   ai_node_22
+   23      160    Conv2D (0x103) - Conv2D_PW                  2.010   2.00%    46.59%  [    562,687 ]   ai_node_23
+   24      163    Pad (0x116) - Pad                           0.043   0.04%    46.63%  [     12,087 ]   ai_node_24
+   25      163    Conv2D (0x103) - Conv2D_DW                  3.505   3.49%    50.12%  [    981,355 ]   ai_node_25
+   26      166    Conv2D (0x103) - Conv2D_PW                  1.211   1.20%    51.33%  [    339,057 ]   ai_node_26
+   27      169    EltwiseInt (0x114) - Eltwise (add)          0.110   0.11%    51.43%  [     30,671 ]   ai_node_27
+   28      172    Conv2D (0x103) - Conv2D_PW                  2.010   2.00%    53.43%  [    562,667 ]   ai_node_28
+   29      175    Pad (0x116) - Pad                           0.043   0.04%    53.48%  [     12,080 ]   ai_node_29
+   30      175    Conv2D (0x103) - Conv2D_DW                  0.897   0.89%    54.37%  [    251,295 ]   ai_node_30
+   31      178    Conv2D (0x103) - Conv2D_PW                  0.480   0.48%    54.85%  [    134,277 ]   ai_node_31
+   32      181    Conv2D (0x103) - Conv2D_PW                  1.111   1.11%    55.95%  [    311,027 ]   ai_node_32
+   33      184    Pad (0x116) - Pad                           0.020   0.02%    55.97%  [      5,722 ]   ai_node_33
+   34      184    Conv2D (0x103) - Conv2D_DW                  1.342   1.34%    57.31%  [    375,735 ]   ai_node_34
+   35      187    Conv2D (0x103) - Conv2D_PW                  0.680   0.68%    57.98%  [    190,297 ]   ai_node_35
+   36      190    EltwiseInt (0x114) - Eltwise (add)          0.043   0.04%    58.03%  [     12,118 ]   ai_node_36
+   37      193    Conv2D (0x103) - Conv2D_PW                  1.111   1.10%    59.13%  [    310,942 ]   ai_node_37
+   38      196    Pad (0x116) - Pad                           0.021   0.02%    59.15%  [      5,779 ]   ai_node_38
+   39      196    Conv2D (0x103) - Conv2D_DW                  1.342   1.33%    60.49%  [    375,666 ]   ai_node_39
+   40      199    Conv2D (0x103) - Conv2D_PW                  0.680   0.68%    61.16%  [    190,377 ]   ai_node_40
+   41      202    EltwiseInt (0x114) - Eltwise (add)          0.043   0.04%    61.21%  [     12,087 ]   ai_node_41
+   42      205    Conv2D (0x103) - Conv2D_PW                  1.111   1.10%    62.31%  [    310,945 ]   ai_node_42
+   43      208    Pad (0x116) - Pad                           0.021   0.02%    62.33%  [      5,789 ]   ai_node_43
+   44      208    Conv2D (0x103) - Conv2D_DW                  1.342   1.33%    63.67%  [    375,661 ]   ai_node_44
+   45      211    Conv2D (0x103) - Conv2D_PW                  0.679   0.68%    64.34%  [    190,256 ]   ai_node_45
+   46      214    EltwiseInt (0x114) - Eltwise (add)          0.043   0.04%    64.39%  [     12,084 ]   ai_node_46
+   47      217    Conv2D (0x103) - Conv2D_PW                  1.111   1.11%    65.49%  [    311,046 ]   ai_node_47
+   48      220    Pad (0x116) - Pad                           0.020   0.02%    65.51%  [      5,729 ]   ai_node_48
+   49      220    Conv2D (0x103) - Conv2D_DW                  1.342   1.34%    66.85%  [    375,737 ]   ai_node_49
+   50      223    Conv2D (0x103) - Conv2D_PW                  0.905   0.90%    67.75%  [    253,495 ]   ai_node_50
+   51      226    Conv2D (0x103) - Conv2D_PW                  1.661   1.65%    69.40%  [    464,974 ]   ai_node_51
+   52      229    Pad (0x116) - Pad                           0.026   0.03%    69.43%  [      7,242 ]   ai_node_52
+   53      229    Conv2D (0x103) - Conv2D_DW                  1.786   1.78%    71.20%  [    500,155 ]   ai_node_53
+   54      232    Conv2D (0x103) - Conv2D_PW                  1.175   1.17%    72.37%  [    329,138 ]   ai_node_54
+   55      235    EltwiseInt (0x114) - Eltwise (add)          0.057   0.06%    72.43%  [     16,072 ]   ai_node_55
+   56      238    Conv2D (0x103) - Conv2D_PW                  1.661   1.65%    74.08%  [    464,988 ]   ai_node_56
+   57      241    Pad (0x116) - Pad                           0.026   0.03%    74.11%  [      7,231 ]   ai_node_57
+   58      241    Conv2D (0x103) - Conv2D_DW                  1.787   1.78%    75.88%  [    500,248 ]   ai_node_58
+   59      244    Conv2D (0x103) - Conv2D_PW                  1.175   1.17%    77.05%  [    329,127 ]   ai_node_59
+   60      247    EltwiseInt (0x114) - Eltwise (add)          0.057   0.06%    77.11%  [     15,890 ]   ai_node_60
+   61      250    Conv2D (0x103) - Conv2D_PW                  1.661   1.65%    78.76%  [    465,060 ]   ai_node_61
+   62      253    Pad (0x116) - Pad                           0.026   0.03%    78.79%  [      7,318 ]   ai_node_62
+   63      253    Conv2D (0x103) - Conv2D_DW                  0.487   0.48%    79.27%  [    136,255 ]   ai_node_63
+   64      256    Conv2D (0x103) - Conv2D_PW                  0.613   0.61%    79.88%  [    171,713 ]   ai_node_64
+   65      259    Conv2D (0x103) - Conv2D_PW                  1.356   1.35%    81.23%  [    379,652 ]   ai_node_65
+   66      262    Pad (0x116) - Pad                           0.016   0.02%    81.25%  [      4,441 ]   ai_node_66
+   67      262    Conv2D (0x103) - Conv2D_DW                  0.847   0.84%    82.09%  [    237,082 ]   ai_node_67
+   68      265    Conv2D (0x103) - Conv2D_PW                  1.025   1.02%    83.11%  [    286,932 ]   ai_node_68
+   69      268    EltwiseInt (0x114) - Eltwise (add)          0.027   0.03%    83.14%  [      7,516 ]   ai_node_69
+   70      271    Conv2D (0x103) - Conv2D_PW                  1.356   1.35%    84.49%  [    379,675 ]   ai_node_70
+   71      274    Pad (0x116) - Pad                           0.016   0.02%    84.50%  [      4,412 ]   ai_node_71
+   72      274    Conv2D (0x103) - Conv2D_DW                  0.847   0.84%    85.35%  [    237,209 ]   ai_node_72
+   73      277    Conv2D (0x103) - Conv2D_PW                  1.025   1.02%    86.37%  [    287,106 ]   ai_node_73
+   74      280    EltwiseInt (0x114) - Eltwise (add)          0.027   0.03%    86.39%  [      7,489 ]   ai_node_74
+   75      283    Conv2D (0x103) - Conv2D_PW                  1.356   1.35%    87.74%  [    379,645 ]   ai_node_75
+   76      286    Pad (0x116) - Pad                           0.016   0.02%    87.76%  [      4,440 ]   ai_node_76
+   77      286    Conv2D (0x103) - Conv2D_DW                  0.847   0.84%    88.60%  [    237,208 ]   ai_node_77
+   78      289    Conv2D (0x103) - Conv2D_PW                  2.047   2.04%    90.64%  [    573,174 ]   ai_node_78
+   79      292    Conv2D (0x103) - Conv2D_PW                  8.602   8.56%    99.19%  [  2,408,477 ]   ai_node_79
+   80      295    Pool (0x10b) - Pool_Avg                     0.716   0.71%    99.91%  [    200,582 ]   ai_node_80
+   81      301    Dense (0x104) - Dense                       0.093   0.09%   100.00%  [     26,085 ]   ai_node_81
+   ------------------------------------------------------------------------------------------------------------------
+   total                                                    100.507                    [ 28,141,973 ]
+                                                         9.95 inf/s
+   ------------------------------------------------------------------------------------------------------------------
+   Statistic per tensor
+   ------------------------------------------------------------------------------
+   tensor   #   type[shape]:size        min   max      mean      std  name
+   ------------------------------------------------------------------------------
+   I.0      1   i8[1,3,32,32]:3072     -128   127    -0.712   74.264  input_1
+   O.0      1   i8[1,10]:10             -80    11   -47.900   30.191  output_1
+   ------------------------------------------------------------------------------
+Saving validation data...
+ output directory: C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-output-directory-ed125ede-e406-423e-acc4-5d6df67abeb5
+ creating C:\Users\aiprod\AppData\Local\Temp\benchmark-ai-output-directory-ed125ede-e406-423e-acc4-5d6df67abeb5\network_val_io.npz
+ m_outputs_1: (1, 10)/float64, min/max=[-8.468275, 15.613382], mean/std=[0.026463, 7.989525], logits
+ c_outputs_1: (1, 10)/int8, min/max=[-80, 11], mean/std=[-47.900000, 30.190893], scale=0.264633596 zp=-48, logits
+Computing the metrics...
+ Cross accuracy report #1 (reference vs C-model)
+ ----------------------------------------------------------------------------------------------------
+ notes: - data type is different: r/float64 instead p/int8
+        - p/int8 data are dequantized with s=0.2646335959434509 zp=-48
+        - ACC metric is not computed ("--classifier" option can be used to force it)
+        - the output of the reference model is used as ground truth/reference value
+        - 1 samples (10 items per sample)
+  acc=n.a. rmse=0.000000000 mae=0.000000000 l2r=0.000000000 mean=0.000000 std=0.000000 snr=inf nse=1.000000 cos=1.000000
+ Evaluation report (summary)
+ -------------------------------------------------------------------------------------------------------------------------
+ Output       acc    rmse          mae           l2r           mean       std        snr   nse        cos        tensor
+ -------------------------------------------------------------------------------------------------------------------------
+ X-cross #1   n.a.   0.000000000   0.000000000   0.000000000   0.000000   0.000000   inf   1.000000   1.000000   logits
+ -------------------------------------------------------------------------------------------------------------------------
+  acc  : Accuracy (class, axis=-1)
+  rmse : Root Mean Squared Error
+  mae  : Mean Absolute Error
+  l2r  : L2 relative error
+  mean : Mean error
+  std  : Standard deviation error
+  snr  : Signal-to-Noise Ratio (SNR), bigger is better
+  nse  : Nash-Sutcliffe efficiency criteria, bigger is better, best=1, range=(-inf, 1]
+  cos  : COsine Similarity, bigger is better, best=1, range=(0, 1]
+Creating txt report file C:/Users/aiprod/AppData/Local/Temp/benchmark-ai-output-directory-ed125ede-e406-423e-acc4-5d6df67abeb5/network_validate_report.txt
+elapsed time (VALIDATE): 6.610s
+
