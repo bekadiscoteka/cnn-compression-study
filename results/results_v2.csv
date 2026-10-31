@@ -35,3 +35,15 @@ mbv2_p50_qat_s3,2026-10-30,e2d4902,0.5,qat,3,79.45,114938,5577994,calibration=pe
 mbv2_p75_fp32_s3,2026-10-30,e2d4902,0.75,fp32,3,66.63,35090,1989642,torch_acc=66.63
 mbv2_p75_ptq_s3,2026-10-30,e2d4902,0.75,ptq,3,64.44,35090,1989642,calibration=percentile 99.99
 mbv2_p75_qat_s3,2026-10-30,e2d4902,0.75,qat,3,64.74,35090,1989642,calibration=percentile 99.99
+mbv2_p00_qat15_s1,2026-10-31,c86ab91,0.0,qat15,1,87.46,408938,17550858,calibration=percentile 99.99 qat_epochs=15
+mbv2_p25_qat15_s1,2026-10-31,c86ab91,0.25,qat15,1,85.31,239554,10765066,calibration=percentile 99.99 qat_epochs=15
+mbv2_p50_qat15_s1,2026-10-31,c86ab91,0.5,qat15,1,79.78,114938,5577994,calibration=percentile 99.99 qat_epochs=15
+mbv2_p75_qat15_s1,2026-10-31,c86ab91,0.75,qat15,1,36.40,35090,1989642,calibration=percentile 99.99 qat_epochs=15
+mbv2_p00_qat15_s2,2026-10-31,c86ab91,0.0,qat15,2,88.68,408938,17550858,calibration=percentile 99.99 qat_epochs=15
+mbv2_p25_qat15_s2,2026-10-31,c86ab91,0.25,qat15,2,86.76,239554,10765066,calibration=percentile 99.99 qat_epochs=15
+mbv2_p50_qat15_s2,2026-10-31,c86ab91,0.5,qat15,2,71.75,114938,5577994,calibration=percentile 99.99 qat_epochs=15
+mbv2_p75_qat15_s2,2026-10-31,c86ab91,0.75,qat15,2,61.39,35090,1989642,calibration=percentile 99.99 qat_epochs=15
+mbv2_p00_qat15_s3,2026-10-31,c86ab91,0.0,qat15,3,87.69,408938,17550858,calibration=percentile 99.99 qat_epochs=15
+mbv2_p25_qat15_s3,2026-10-31,c86ab91,0.25,qat15,3,86.16,239554,10765066,calibration=percentile 99.99 qat_epochs=15
+mbv2_p50_qat15_s3,2026-10-31,c86ab91,0.5,qat15,3,79.90,114938,5577994,calibration=percentile 99.99 qat_epochs=15
+mbv2_p75_qat15_s3,2026-10-31,c86ab91,0.75,qat15,3,64.62,35090,1989642,calibration=percentile 99.99 qat_epochs=15

@@ -10,12 +10,12 @@ The research plan is fixed in `docs/methodology.docx`, committed before any expe
 |---|---|
 | Plan fixed | done |
 | Training pipeline (baseline, pruning, ONNX export, PTQ, QAT) | done |
-| 36 models trained and evaluated | done (`results/results_v2.csv`) |
+| 36 models + 12 `qat15` trained and evaluated | done (`results/results_v2.csv`, 48 rows) |
 | Calibration method chosen on a validation split | done: percentile 99.99 (`results/calibration_check.csv`) |
 | Board fixed | done: STM32H7B3I-DK, 280 MHz, ST Edge AI 4.1.0 |
-| Hardware benchmarks, seed 1 | 8 of 12 done (fp32 and PTQ); QAT and one Balanced/RAM check pending |
+| Hardware benchmarks, seed 1 | 12 of 12 done; one Balanced vs RAM check on a single model pending |
 | Energy, Pareto analysis, hypothesis tests | next |
-| QAT budget check (`qat15`, 15 epochs) | code ready, waiting for the Colab run |
+| QAT budget check (`qat15`, 15 epochs) | done |
 
 ## Structure
 
