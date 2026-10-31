@@ -1,0 +1,17 @@
+pruning,quant,n,acc_mean,acc_std,acc_min,acc_max,params,macs,latency_ms,energy_mj,edp,flash_kb,ram_kb,optimization,drop_vs_baseline_pp,technique,pareto_main,pareto_with_qat15
+0.0,fp32,3,89.49,0.128,89.38,89.63,408938,17550858,427.165,47.364,20232.267,1591.1,273.4,balanced,0.0,none,True,True
+0.0,ptq,3,87.883,0.681,87.48,88.67,408938,17550858,100.498,11.143,1119.871,475.1,136.9,balanced,1.607,quantization only,True,False
+0.0,qat,3,87.713,0.878,86.99,88.69,408938,17550858,100.498,11.143,1119.871,475.1,136.9,balanced,1.777,quantization only,False,False
+0.25,fp32,3,87.6,0.426,87.14,87.98,239554,10765066,289.948,32.149,9321.664,936.4,220.9,balanced,1.89,pruning only,False,False
+0.25,ptq,3,85.807,0.814,84.91,86.5,239554,10765066,84.178,9.334,785.679,297.3,84.4,ram,3.683,pruning + quantization,False,False
+0.25,qat,3,85.877,0.737,85.17,86.64,239554,10765066,84.178,9.334,785.679,297.3,84.4,ram,3.613,pruning + quantization,True,False
+0.5,fp32,3,81.64,0.149,81.47,81.75,114938,5577994,165.394,18.339,3033.142,456.6,151.4,balanced,7.85,pruning only,False,False
+0.5,ptq,3,75.0,5.924,68.23,79.23,114938,5577994,42.267,4.687,198.087,167.3,42.4,balanced,14.49,pruning + quantization,False,False
+0.5,qat,3,75.663,6.005,68.74,79.45,114938,5577994,42.267,4.687,198.087,167.3,42.4,balanced,13.827,pruning + quantization,True,False
+0.75,fp32,3,66.97,1.206,65.97,68.31,35090,1989642,70.029,7.765,543.762,151.3,115.4,balanced,22.52,pruning only,False,False
+0.75,ptq,3,52.013,17.746,31.69,64.44,35090,1989642,20.228,2.243,45.369,78.9,35.0,balanced,37.477,pruning + quantization,False,False
+0.75,qat,3,53.187,16.876,33.82,64.74,35090,1989642,20.228,2.243,45.369,78.9,35.0,balanced,36.303,pruning + quantization,True,False
+0.0,qat15,3,87.943,0.648,87.46,88.68,408938,17550858,100.498,11.143,1119.871,475.1,136.9,balanced,1.547,quantization only,False,True
+0.25,qat15,3,86.077,0.729,85.31,86.76,239554,10765066,84.178,9.334,785.679,297.3,84.4,ram,3.413,pruning + quantization,False,True
+0.5,qat15,3,77.143,4.671,71.75,79.9,114938,5577994,42.267,4.687,198.087,167.3,42.4,balanced,12.347,pruning + quantization,False,True
+0.75,qat15,3,54.137,15.445,36.4,64.62,35090,1989642,20.228,2.243,45.369,78.9,35.0,balanced,35.353,pruning + quantization,False,True

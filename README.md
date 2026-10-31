@@ -14,7 +14,7 @@ The research plan is fixed in `docs/methodology.docx`, committed before any expe
 | Calibration method chosen on a validation split | done: percentile 99.99 (`results/calibration_check.csv`) |
 | Board fixed | done: STM32H7B3I-DK, 280 MHz, ST Edge AI 4.1.0 |
 | Hardware benchmarks, seed 1 | 12 of 12 done; one Balanced vs RAM check on a single model pending |
-| Energy, Pareto analysis, hypothesis tests | next |
+| Energy, Pareto analysis, hypothesis tests | done: `analysis.py` -> `results/analysis/` (see `hypotheses.md`) |
 | QAT budget check (`qat15`, 15 epochs) | done |
 
 ## Structure
@@ -27,6 +27,7 @@ The research plan is fixed in `docs/methodology.docx`, committed before any expe
 ├── train.py               whole matrix: train, prune, export, quantize, evaluate
 ├── calibrate_check.py     picks the int8 calibration method on a validation split
 ├── parse_benchmarks.py    results/benchmarks/ logs -> results/hardware.csv
+├── analysis.py            energy, Pareto fronts, selection rule, H1-H3 tests, figures
 ├── docs/
 │   ├── methodology.docx   research plan, hypotheses, selection rule
 │   └── notes.md           dated log of problems, deviations and decisions
@@ -35,7 +36,8 @@ The research plan is fixed in `docs/methodology.docx`, committed before any expe
     ├── results_v1_minmax.csv  first run with MinMax calibration, kept for the record
     ├── calibration_check.csv  int8 accuracy drop per calibration method (validation split)
     ├── hardware.csv           one row per benchmarked model: latency, Flash, RAM, settings
-    └── benchmarks/            raw ST Edge AI logs, one folder per model
+    ├── benchmarks/            raw ST Edge AI logs, one folder per model
+    └── analysis/              summary_by_config.csv, selection.csv, hypotheses.md, fig1-fig4
 ```
 
 Trained models (`.pt`, `.onnx`) and the dataset are not in git; they live on Google Drive in `cnn-study/`.
@@ -51,7 +53,7 @@ ST Edge AI Developer Cloud (STM32H7B3I-DK) ─► logs ─► results/benchmarks
                                                          │
                                          parse_benchmarks.py ─► results/hardware.csv
                                                          │
-                      analysis (next): results_v2.csv + hardware.csv ─► energy, Pareto fronts, tests
+                      analysis.py: results_v2.csv + hardware.csv ─► results/analysis/
 ```
 
 Hardware figures are measured once per architecture (seed 1): seeds change weight values, not layer sizes, and PTQ and QAT models share one graph. The analysis joins them to every row of the same pruning ratio and int8/fp32 type.
