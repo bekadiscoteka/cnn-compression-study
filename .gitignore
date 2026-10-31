@@ -9,3 +9,13 @@ smoke_out/
 out/
 
 .vimtmp
+
+# LaTeX build files
+paper/*.aux
+paper/*.log
+paper/*.blg
+paper/*.bbl
+paper/*.out
+paper/*.fls
+paper/*.fdb_latexmk
+paper/*.synctex.gz

@@ -41,7 +41,7 @@ LABEL = {"fp32": "fp32", "ptq": "int8 PTQ", "qat": "int8 QAT (5 ep.)", "qat15": 
 def load():
     acc = pd.read_csv(HERE / "results" / "results_v2.csv")
     hw = pd.read_csv(HERE / "results" / "hardware.csv")
-    # PTQ and QAT models share one graph; their measured latencies differ only by noise (< 0.03 %),
+    # PTQ and QAT models share one graph; their measured latencies differ only by noise (< 0.1 %),
     # so int8 uses the mean of the two measurements per pruning ratio.
     hw["hw_quant"] = np.where(hw["quant"] == "fp32", "fp32", "int8")
     per_arch = hw.groupby(["pruning", "hw_quant"]).agg(

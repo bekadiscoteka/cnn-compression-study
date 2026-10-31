@@ -16,6 +16,7 @@ The research plan is fixed in `docs/methodology.docx`, committed before any expe
 | Hardware benchmarks, seed 1 | 12 of 12 done; one Balanced vs RAM check on a single model pending |
 | Energy, Pareto analysis, hypothesis tests | done: `analysis.py` -> `results/analysis/` (see `hypotheses.md`) |
 | QAT budget check (`qat15`, 15 epochs) | done |
+| Paper (IEEE conference template) | draft: `paper/main.pdf`; author affiliation to be completed |
 
 ## Structure
 
@@ -28,6 +29,7 @@ The research plan is fixed in `docs/methodology.docx`, committed before any expe
 ├── calibrate_check.py     picks the int8 calibration method on a validation split
 ├── parse_benchmarks.py    results/benchmarks/ logs -> results/hardware.csv
 ├── analysis.py            energy, Pareto fronts, selection rule, H1-H3 tests, figures
+├── paper/                 IEEE conference paper: main.tex, references.bib, figures/, main.pdf
 ├── docs/
 │   ├── methodology.docx   research plan, hypotheses, selection rule
 │   └── notes.md           dated log of problems, deviations and decisions
@@ -68,6 +70,8 @@ Hardware figures are measured once per architecture (seed 1): seeds change weigh
 2. Benchmark the `.onnx` files from Drive in ST Edge AI Developer Cloud on STM32H7B3I-DK (Quantize step skipped, models are already int8). Save the logs to `results/benchmarks/<model>/` and run `python parse_benchmarks.py`; it warns if settings differ between runs.
 
 Local pipeline check without a GPU or dataset: `python train.py --smoke`.
+
+Paper: `python analysis.py && python paper/make_figures.py`, then `cd paper && latexmk -pdf main.tex`.
 
 ## Rules
 
