@@ -43,7 +43,12 @@ warnings.filterwarnings("ignore", category=DeprecationWarning)  # legacy ONNX ex
 warnings.filterwarnings("ignore", message="Detected call of `lr_scheduler.step()`")  # harmless with AMP
 MEAN, STD = (0.4914, 0.4822, 0.4465), (0.2470, 0.2435, 0.2616)
 FIELDS = ["run_id", "date", "commit", "pruning", "quant", "seed", "accuracy", "params", "macs", "notes"]
-QUANTS = ["fp32", "ptq", "qat"]
+BASE_QUANTS = ["fp32", "ptq"]
+
+
+def quants(cfg):
+    """fp32, PTQ, then one QAT variant per entry of qat_variants in config.yaml."""
+    return BASE_QUANTS + list(cfg["qat_variants"])
 
 
 # ---------------------------------------------------------------- utilities
@@ -325,7 +330,7 @@ def resolve_calibration(cfg, out):
 
 def run_cell(p, seed, cfg, calib, data, out, device, smoke):
     csv_path, models = out / cfg["results_file"], out / "models"
-    todo = [q for q in QUANTS if run_id(p, q, seed) not in done_runs(csv_path)]
+    todo = [q for q in quants(cfg) if run_id(p, q, seed) not in done_runs(csv_path)]
     if not todo:
         print(f"[skip] {tag(p)} seed {seed}: already in {csv_path.name}")
         return
@@ -363,22 +368,24 @@ def run_cell(p, seed, cfg, calib, data, out, device, smoke):
 
     torch_acc = eval_torch(model, test_ds, device)
     macs, params = tp.utils.count_ops_and_params(model, torch.randn(1, 3, 32, 32, device=device))
-    paths = {q: models / f"{tag(p)}_{q}_s{seed}.onnx" for q in QUANTS}
+    paths = {q: models / f"{tag(p)}_{q}_s{seed}.onnx" for q in quants(cfg)}
 
     if not paths["fp32"].exists():
         export_onnx(model, paths["fp32"])
     if "ptq" in todo:
         quantize_int8(paths["fp32"], paths["ptq"], calib_ds, cfg["calibration_images"], calib)
-    if "qat" in todo:
-        print("  quantization-aware fine-tuning")
-        set_seed(seed)
+    qat_todo = [q for q in todo if q in cfg["qat_variants"]]
+    if qat_todo:
         idx = calibration_indices(len(calib_ds), cfg["calibration_images"])
         calib_images = torch.stack([calib_ds[int(i)][0] for i in idx])
-        qat_model = qat(copy.deepcopy(model), loader, cfg["qat_epochs"], cfg["qat_lr"], wd, device,
-                        calib_images, calib)
-        qat_fp32 = models / f"{tag(p)}_qatfp32_s{seed}.onnx"
+    for q in qat_todo:  # every variant starts from the same fp32 model
+        epochs = cfg["qat_variants"][q]
+        print(f"  quantization-aware fine-tuning: {q}, {epochs} epochs")
+        set_seed(seed)
+        qat_model = qat(copy.deepcopy(model), loader, epochs, cfg["qat_lr"], wd, device, calib_images, calib)
+        qat_fp32 = models / f"{tag(p)}_{q}fp32_s{seed}.onnx"
         export_onnx(qat_model, qat_fp32)
-        quantize_int8(qat_fp32, paths["qat"], calib_ds, cfg["calibration_images"], calib)
+        quantize_int8(qat_fp32, paths[q], calib_ds, cfg["calibration_images"], calib)
         qat_fp32.unlink()
 
     common = {"date": datetime.date.today().isoformat(), "commit": git_commit(), "pruning": p,
@@ -389,6 +396,8 @@ def run_cell(p, seed, cfg, calib, data, out, device, smoke):
         note = f"torch_acc={torch_acc:.2f}" if q == "fp32" else ""
         if q != "fp32":
             note = f"calibration={calib['method']}" + (f" {calib['percentile']}" if calib["method"] == "percentile" else "")
+            if q in cfg["qat_variants"]:
+                note += f" qat_epochs={cfg['qat_variants'][q]}"
         rows.append({**common, "run_id": run_id(p, q, seed), "quant": q, "accuracy": f"{acc:.2f}",
                      "notes": ("smoke " if smoke else "") + note})
         print(f"  {q:4s} accuracy {acc:6.2f}%   {paths[q].stat().st_size / 1024:5.0f} KB")
@@ -406,7 +415,8 @@ def main():
 
     cfg = yaml.safe_load(open(HERE / "config.yaml"))
     if args.smoke:
-        cfg["train"]["epochs"] = cfg["finetune_epochs"] = cfg["qat_epochs"] = 1
+        cfg["train"]["epochs"] = cfg["finetune_epochs"] = 1
+        cfg["qat_variants"] = {q: 1 for q in cfg["qat_variants"]}
         cfg["calibration_images"], args.out = 32, "smoke_out"
     seeds = [args.seed] if args.seed is not None else cfg["seeds"]
     ratios = [args.pruning] if args.pruning is not None else cfg["pruning_ratios"]
@@ -424,7 +434,7 @@ def main():
             run_cell(p, seed, cfg, calib, data, out, device, args.smoke)
 
     done = done_runs(out / cfg["results_file"])
-    expected = {run_id(p, q, s) for s in cfg["seeds"] for p in cfg["pruning_ratios"] for q in QUANTS}
+    expected = {run_id(p, q, s) for s in cfg["seeds"] for p in cfg["pruning_ratios"] for q in quants(cfg)}
     onnx = len(list((out / "models").glob("*_s[0-9].onnx")))
     print(f"\nProgress: {len(done & expected)}/{len(expected)} rows in {cfg['results_file']}, {onnx} ONNX models")
     missing = sorted(expected - done)

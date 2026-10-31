@@ -1,6 +1,6 @@
 # Quantization and Pruning Trade-offs for Embedded CNN Inference
 
-Controlled comparison of structured channel pruning (0, 25, 50, 75 %) and int8 quantization (PTQ, QAT) for MobileNetV2 (width 0.35) on CIFAR-10. Accuracy is measured on the exported ONNX models; latency and memory on a real STM32H7B3I-DK board through ST Edge AI Developer Cloud. 3 seeds × 4 pruning ratios × 3 variants (fp32, PTQ, QAT) = 36 models.
+Controlled comparison of structured channel pruning (0, 25, 50, 75 %) and int8 quantization (PTQ, QAT) for MobileNetV2 (width 0.35) on CIFAR-10. Accuracy is measured on the exported ONNX models; latency and memory on a real STM32H7B3I-DK board through ST Edge AI Developer Cloud. 3 seeds × 4 pruning ratios × 3 variants (fp32, PTQ, QAT) = 36 models, plus a QAT-15-epoch sensitivity check (12 more).
 
 The research plan is fixed in `docs/methodology.docx`, committed before any experiment. Every deviation from it is dated and explained in `docs/notes.md`.
 
@@ -15,7 +15,7 @@ The research plan is fixed in `docs/methodology.docx`, committed before any expe
 | Board fixed | done: STM32H7B3I-DK, 280 MHz, ST Edge AI 4.1.0 |
 | Hardware benchmarks, seed 1 | 8 of 12 done (fp32 and PTQ); QAT and one Balanced/RAM check pending |
 | Energy, Pareto analysis, hypothesis tests | next |
-| QAT budget check (15 epochs) | open decision |
+| QAT budget check (`qat15`, 15 epochs) | code ready, waiting for the Colab run |
 
 ## Structure
 
@@ -58,7 +58,7 @@ Hardware figures are measured once per architecture (seed 1): seeds change weigh
 
 ## Naming
 
-`mbv2_p50_qat_s2` = MobileNetV2, 50 % of channels pruned, int8 via QAT, seed 2. Quantization: `fp32`, `ptq`, `qat`. The same name is used for files on Drive, rows in `results_v2.csv` and folders in `results/benchmarks/`.
+`mbv2_p50_qat_s2` = MobileNetV2, 50 % of channels pruned, int8 via QAT, seed 2. Quantization: `fp32`, `ptq`, `qat` (5 epochs, pre-registered), `qat15` (15 epochs, sensitivity check). The same name is used for files on Drive, rows in `results_v2.csv` and folders in `results/benchmarks/`.
 
 ## Running
 
